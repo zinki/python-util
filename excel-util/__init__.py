@@ -55,15 +55,44 @@ def update(arrays, tableName):
     return sql
 
 
-def writeFile(tableName):
+def insert(arrays, tableName):
+    sql = "INSERT %s("
+    values = ''
+    for key in arrays:
+        value = ''
+        if arrays[key] == 'NULL':
+            value = 'NULL'
+        else:
+            value += '\''
+            value += str(arrays[key])
+            value += '\''
+        sql += key
+        sql += ','
+        values += value
+        values += ','
+
+    sql = sql[:len(sql) - 1]
+    sql += ') VALUES('
+    values = values[:len(values) - 1]
+    sql += values
+    sql += ');'
+    sql = sql % tableName
+    print(sql)
+    return sql
+
+
+def writeFile(tableName, operate):
     import_excel(table)
     with open('output.txt', 'w') as f:
         for i in tables:
-            sql = update(i, tableName)
+            if operate == 'INSERT':
+                sql = insert(i, tableName)
+            else:
+                sql = update(i, tableName)
             f.write(sql)
             f.write('\n')
 
 
 if __name__ == '__main__':
     # 将excel表格的内容导入到列表中
-    writeFile("middle_card_bin_infos")
+    writeFile("middle_card_bin_infos", "INSERT")
