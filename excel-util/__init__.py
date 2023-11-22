@@ -1,30 +1,16 @@
 import xlrd
 
-# 导入需要读取的第一个Excel表格的路径
-
-data = xlrd.open_workbook(r'D:\Users\qzhang59\Documents\卡bin修改\11.15\卡BIN更新记录20231114.xls')
-
-table = data.sheets()[0]
-
-# 创建一个空列表，存储Excel的数据
-
-tables = []
-
 
 # 将excel表格内容导入到tables列表中
-
 def import_excel(excel):
-    for rown in range(excel.nrows):
-        array = {'bank_name': table.cell_value(rown, 0), 'bank_abbr': table.cell_value(rown, 1),
-                 'card_bin': int(table.cell_value(rown, 2)), 'card_type': int(table.cell_value(rown, 3)),
-                 'card_orgnz': table.cell_value(rown, 4), 'card_name': table.cell_value(rown, 5),
-                 'cardno_len': int(table.cell_value(rown, 6)), 'status': int(table.cell_value(rown, 7)),
-                 'cardbin_len': int(table.cell_value(rown, 8)), 'country_name': table.cell_value(rown, 9),
-                 'primary_scheme': table.cell_value(rown, 10), 'country_2_code': table.cell_value(rown, 11),
-                 'country_3_code': table.cell_value(rown, 12), 'country_3_num': int(table.cell_value(rown, 13)),
-                 'card_grade': table.cell_value(rown, 14)}
-
+    header = excel.row_values(0)
+    array = {}
+    tables = []
+    for rown in range(1, excel.nrows):
+        for index in range(len(header)):
+            array[header[index]] = excel.cell_value(rown, index)
         tables.append(array)
+    return tables
 
 
 def update(arrays, tableName):
@@ -81,8 +67,17 @@ def insert(arrays, tableName):
     return sql
 
 
-def writeFile(tableName, operate):
-    import_excel(table)
+def readFile(path):
+    # 导入需要读取的第一个Excel表格的路径
+    data = xlrd.open_workbook(path)
+    table = data.sheets()[0]
+    # 创建一个空列表，存储Excel的数据
+    tables = import_excel(table)
+    return tables
+
+
+def writeFile(tableName, tables, operate):
+    # 创建一个空列表，存储Excel的数据
     with open('output.txt', 'w') as f:
         for i in tables:
             if operate == 'INSERT':
@@ -95,4 +90,5 @@ def writeFile(tableName, operate):
 
 if __name__ == '__main__':
     # 将excel表格的内容导入到列表中
-    writeFile("middle_card_bin_infos", "INSERT")
+    file = readFile(r"D:\Users\qzhang59\Documents\卡bin修改\11.22\新增.xls")
+    writeFile("card_bin_detail_infos", file, "UPDATE")
