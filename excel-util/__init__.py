@@ -8,7 +8,10 @@ def import_excel(excel):
     tables = []
     for rown in range(1, excel.nrows):
         for index in range(len(header)):
-            array[header[index]] = excel.cell_value(rown, index)
+            if excel.cell_value(rown, index) == '':
+                array[header[index]] = excel.cell_value(rown, index)
+            else:
+                array[header[index]] = int(excel.cell_value(rown, index))
         tables.append(array)
     return tables
 
