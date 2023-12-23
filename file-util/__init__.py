@@ -10,9 +10,9 @@ def rename(path):
         # 判断是否是文件（查找以QL开头以.rmvb结尾的文件）
         if file.endswith(".flac"):
             # 设置新文件名
-            newName = file.replace(" ", "")
+            new_name = file.replace(" ", "")
             # 重命名
-            os.rename(os.path.join(path, file), os.path.join(path, newName))
+            os.rename(os.path.join(path, file), os.path.join(path, new_name))
 
 
 if __name__ == '__main__':
